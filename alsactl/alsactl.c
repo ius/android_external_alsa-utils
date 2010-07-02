@@ -97,7 +97,8 @@ int main(int argc, char *argv[])
 	};
 	char *cfgfile = SYS_ASOUNDRC;
 	char *initfile = DATADIR "/init/00main";
-	char *cardname, **tmp, ncardname[16];
+	char *cardname, ncardname[16];
+	const char *const *tmp;
 	int removestate = 0;
 	int init_fallback = 1; /* new default behavior */
 	int res;
@@ -106,7 +107,7 @@ int main(int argc, char *argv[])
 	while (1) {
 		int c;
 
-		if ((c = getopt_long(argc, argv, "hdvf:FgE:i:Pr:R", long_option, NULL)) < 0)
+		if ((c = getopt_long(argc, argv, "hdvf:FgE:i:IPr:R", long_option, NULL)) < 0)
 			break;
 		switch (c) {
 		case 'h':
@@ -188,5 +189,5 @@ int main(int argc, char *argv[])
 	}
 
 	snd_config_update_free_global();
-	return res < 0 ? res : 0;
+	return res < 0 ? -res : 0;
 }

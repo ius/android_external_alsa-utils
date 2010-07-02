@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alsa-utils 1.0.9a\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-19 12:24+0100\n"
-"PO-Revision-Date: 2006-04-18 15:51+0200\n"
+"POT-Creation-Date: 2010-04-16 13:19+0200\n"
+"PO-Revision-Date: 2009-05-27 15:08+0200\n"
 "Last-Translator: Takashi Iwai <tiwai@suse.de>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,372 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: aplay/aplay.c:136
+#: alsamixer/card_select.c:126 alsamixer/device_name.c:126
+msgid "Sound Card"
+msgstr "サウンドカード"
+
+#: alsamixer/card_select.c:181
+msgid "(default)"
+msgstr "(デフォルト)"
+
+#: alsamixer/card_select.c:191
+msgid "cannot enumerate sound cards"
+msgstr "サウンドカードを検出できません"
+
+#: alsamixer/card_select.c:215
+msgid "enter device name..."
+msgstr "デバイス名入力..."
+
+#: alsamixer/cli.c:40
+msgid "Usage: alsamixer [options]"
+msgstr "使用法: alsamixer [オプション]"
+
+#: alsamixer/cli.c:41
+msgid ""
+"Useful options:\n"
+"  -h, --help              this help\n"
+"  -c, --card=NUMBER       sound card number or id\n"
+"  -D, --device=NAME       mixer device name\n"
+"  -V, --view=MODE         starting view mode: playback/capture/all"
+msgstr ""
+"主なオプション:\n"
+"  -h, --help               このヘルプ画面\n"
+"  -c, --card=番号          サウンドカード番号またはID\n"
+"  -D, --device=名前        ミキサーデバイス名\n"
+"  -V, --view=表示モード    開始時の表示モード: playback/capture/all"
+
+#: alsamixer/cli.c:46
+msgid ""
+"Debugging options:\n"
+"  -g, --no-color          toggle using of colors\n"
+"  -a, --abstraction=NAME  mixer abstraction level: none/basic"
+msgstr ""
+"デバッグオプション:\n"
+"  -g, --no-color           カラー/モノクロ表示\n"
+"  -a, --abstraction=名前   ミキサー抽象レベル: none/basic"
+
+#: alsamixer/cli.c:77
+#, c-format
+msgid "invalid card index: %s\n"
+msgstr "不正なカード番号: %s\n"
+
+#: alsamixer/cli.c:103
+#, c-format
+msgid "unknown abstraction level: %s\n"
+msgstr "未知の抽象レベル: %s\n"
+
+#: alsamixer/cli.c:108
+#, c-format
+msgid "unknown option: %c\n"
+msgstr "未知のオプション '%c'\n"
+
+#: alsamixer/cli.c:110
+msgid "try `alsamixer --help' for more information\n"
+msgstr "より詳しい情報は「alsamixer --help」を実行してください\n"
+
+#: alsamixer/device_name.c:177
+msgid "Device name:"
+msgstr "デバイス名:"
+
+#: alsamixer/die.c:37
+#, c-format
+msgid "%s: %s\n"
+msgstr ""
+
+#: alsamixer/mixer_display.c:95
+msgid "Card:"
+msgstr "カード:"
+
+#: alsamixer/mixer_display.c:96
+msgid "Chip:"
+msgstr "チップ:"
+
+#: alsamixer/mixer_display.c:97
+msgid "View:"
+msgstr "表示:"
+
+#: alsamixer/mixer_display.c:98
+msgid "Item:"
+msgstr "項目:"
+
+#: alsamixer/mixer_display.c:101
+msgid "F1:  Help"
+msgstr "F1:  ヘルプ"
+
+#: alsamixer/mixer_display.c:102
+msgid "F2:  System information"
+msgstr "F2:  システム情報"
+
+#: alsamixer/mixer_display.c:103
+msgid "F6:  Select sound card"
+msgstr "F6:  サウンドカード選択"
+
+#: alsamixer/mixer_display.c:104
+msgid "Esc: Exit"
+msgstr "Esc: 終了"
+
+#: alsamixer/mixer_display.c:171
+msgid "(unplugged)"
+msgstr ""
+
+#: alsamixer/mixer_display.c:189
+msgid "Playback"
+msgstr "再生"
+
+#: alsamixer/mixer_display.c:190
+msgid "Capture"
+msgstr "録音"
+
+#: alsamixer/mixer_display.c:191
+msgid "All"
+msgstr "全て"
+
+#: alsamixer/mixer_display.c:231
+msgid "mute"
+msgstr "ミュート"
+
+#: alsamixer/mixer_display.c:272 alsamixer/mixer_display.c:282
+msgid "dB gain:"
+msgstr "dBゲイン:"
+
+#: alsamixer/mixer_display.c:282
+#, c-format
+msgid " [%s %s, %s]"
+msgstr ""
+
+#: alsamixer/mixer_display.c:291 alsamixer/mixer_display.c:297
+#: alsamixer/mixer_display.c:303 alsamixer/mixer_display.c:309
+msgid "Off"
+msgstr "オフ"
+
+#: alsamixer/mixer_display.c:297 alsamixer/mixer_display.c:309
+msgid "On"
+msgstr "オン"
+
+#: alsamixer/mixer_display.c:360
+msgid "The sound device was unplugged."
+msgstr "デバイスが接続されていません"
+
+#: alsamixer/mixer_display.c:361
+msgid "Press F6 to select another sound card."
+msgstr "他のカードを選択するにはF6を押して下さい"
+
+#: alsamixer/mixer_display.c:376
+msgid "This sound device does not have any playback controls."
+msgstr "このカードには再生ミキサーがありません"
+
+#: alsamixer/mixer_display.c:378
+msgid "This sound device does not have any capture controls."
+msgstr "このカードには録音ミキサーがありません"
+
+#: alsamixer/mixer_display.c:380
+msgid "This sound device does not have any controls."
+msgstr "このカードには制御可能なミキサーがありません"
+
+#. TRANSLATORS: playback on; one character
+#: alsamixer/mixer_display.c:537 alsamixer/mixer_display.c:542
+msgid "O"
+msgstr ""
+
+#. TRANSLATORS: playback muted; one character
+#: alsamixer/mixer_display.c:539 alsamixer/mixer_display.c:543
+msgid "M"
+msgstr ""
+
+#. TRANSLATORS: "left"; no more than two characters
+#: alsamixer/mixer_display.c:557
+msgid "L"
+msgstr ""
+
+#. TRANSLATORS: "right"; no more than two characters
+#: alsamixer/mixer_display.c:561
+msgid "R"
+msgstr ""
+
+#. TRANSLATORS: no more than eight characters
+#: alsamixer/mixer_display.c:563
+msgid "CAPTURE"
+msgstr "録音"
+
+#: alsamixer/mixer_display.c:613
+msgid "Front"
+msgstr "フロント"
+
+#: alsamixer/mixer_display.c:616
+msgid "Rear"
+msgstr "リア"
+
+#: alsamixer/mixer_display.c:619 speaker-test/speaker-test.c:107
+msgid "Center"
+msgstr "センター"
+
+#: alsamixer/mixer_display.c:622
+msgid "Woofer"
+msgstr "低音"
+
+#: alsamixer/mixer_display.c:625
+msgid "Side"
+msgstr "サイド"
+
+#: alsamixer/mixer_widget.c:83 alsamixer/mixer_widget.c:88
+msgid "cannot open mixer"
+msgstr "ミキサーを開けません"
+
+#: alsamixer/mixer_widget.c:94 alsamixer/mixer_widget.c:171
+msgid "cannot load mixer controls"
+msgstr "ミキサーをロードできません"
+
+#: alsamixer/mixer_widget.c:161
+#, c-format
+msgid "Cannot open mixer device '%s'."
+msgstr "ミキサーデバイス'%s'を開けません"
+
+#: alsamixer/mixer_widget.c:182
+msgid "Esc     Exit"
+msgstr "Esc    終了"
+
+#: alsamixer/mixer_widget.c:183
+msgid "F1 ? H  Help"
+msgstr "F1 ?   H ヘルプ"
+
+#: alsamixer/mixer_widget.c:184
+msgid "F2 /    System information"
+msgstr "F2 /   システム情報"
+
+#: alsamixer/mixer_widget.c:185
+msgid "F3      Show playback controls"
+msgstr "F3     再生ミキサー表示"
+
+#: alsamixer/mixer_widget.c:186
+msgid "F4      Show capture controls"
+msgstr "F4     録音ミキサー表示"
+
+#: alsamixer/mixer_widget.c:187
+msgid "F5      Show all controls"
+msgstr "F5     全て表示"
+
+#: alsamixer/mixer_widget.c:188
+msgid "Tab     Toggle view mode (F3/F4/F5)"
+msgstr "Tab    表示モード変更 (F3/F4/F5)"
+
+#: alsamixer/mixer_widget.c:189
+msgid "F6 S    Select sound card"
+msgstr "F5 S   サウンドカード選択"
+
+#: alsamixer/mixer_widget.c:190
+msgid "L       Redraw screen"
+msgstr "L      画面再描画"
+
+#: alsamixer/mixer_widget.c:192
+msgid "Left    Move to the previous control"
+msgstr "←     前の項目に移る"
+
+#: alsamixer/mixer_widget.c:193
+msgid "Right   Move to the next control"
+msgstr "→     次の項目に移る"
+
+# ↑
+#: alsamixer/mixer_widget.c:195
+msgid "Up/Down    Change volume"
+msgstr "↑/↓     音量変更"
+
+#: alsamixer/mixer_widget.c:196
+msgid "+ -        Change volume"
+msgstr "+ -       音量変更"
+
+#: alsamixer/mixer_widget.c:197
+msgid "Page Up/Dn Change volume in big steps"
+msgstr "Page Up/dn 音量変更"
+
+#: alsamixer/mixer_widget.c:198
+msgid "End        Set volume to 0%"
+msgstr "End       音量 0%"
+
+#: alsamixer/mixer_widget.c:199
+msgid "0-9        Set volume to 0%-90%"
+msgstr "0-9       音量 0%-90%"
+
+#: alsamixer/mixer_widget.c:200
+msgid "Q W E      Increase left/both/right volumes"
+msgstr "Q W E     左/両/右音量アップ"
+
+#. TRANSLATORS: or Y instead of Z
+#: alsamixer/mixer_widget.c:202
+msgid "Z X C      Decrease left/both/right volumes"
+msgstr "Z X C     左/両/右音量ダウン"
+
+#: alsamixer/mixer_widget.c:203
+msgid "B          Balance left and right volumes"
+msgstr "B         左右音量を平均化する"
+
+#: alsamixer/mixer_widget.c:205
+msgid "M          Toggle mute"
+msgstr "M         ミュートをトグル"
+
+#. TRANSLATORS: or , .
+#: alsamixer/mixer_widget.c:207
+msgid "< >        Toggle left/right mute"
+msgstr "< >       左/右ミュートをトグル"
+
+#: alsamixer/mixer_widget.c:209
+msgid "Space      Toggle capture"
+msgstr "スペース  録音をトグル"
+
+#. TRANSLATORS: or Insert Delete
+#: alsamixer/mixer_widget.c:211
+msgid "; '        Toggle left/right capture"
+msgstr "; '       左/右録音をトグル"
+
+#: alsamixer/mixer_widget.c:213
+msgid "Authors:"
+msgstr "作者:"
+
+#: alsamixer/mixer_widget.c:214
+msgid "  Tim Janik <timj@gtk.org>"
+msgstr ""
+
+#: alsamixer/mixer_widget.c:215
+msgid "  Jaroslav Kysela <perex@perex.cz>"
+msgstr ""
+
+#: alsamixer/mixer_widget.c:216
+msgid "  Clemens Ladisch <clemens@ladisch.de>"
+msgstr ""
+
+#: alsamixer/mixer_widget.c:218
+msgid "Help"
+msgstr "ヘルプ"
+
+#: alsamixer/proc_files.c:103
+msgid "Select File"
+msgstr "ファイル選択"
+
+#: alsamixer/textbox.c:52 alsamixer/textbox.c:66
+msgid "Error"
+msgstr "エラー"
+
+#: alsamixer/textbox.c:80
+#, c-format
+msgid "Cannot open file \"%s\"."
+msgstr "\"%s\"をオープンできません"
+
+#: aplay/aplay.c:147
 msgid "raw data"
 msgstr "raw データ"
 
-#: aplay/aplay.c:137
+#: aplay/aplay.c:148
 msgid "VOC"
 msgstr "VOC"
 
-#: aplay/aplay.c:139
+#: aplay/aplay.c:150
 msgid "WAVE"
 msgstr "WAVE"
 
-#: aplay/aplay.c:140
+#: aplay/aplay.c:151
 msgid "Sparc Audio"
 msgstr "Sparc オーディオ"
 
-#: aplay/aplay.c:161
+#: aplay/aplay.c:172
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -68,6 +417,15 @@ msgid ""
 "    --disable-format    disable automatic format conversions\n"
 "    --disable-softvol   disable software volume control (softvol)\n"
 "    --test-position     test ring buffer position\n"
+"    --test-coef=#\t test coeficient for ring buffer position (default 8)\n"
+"                        expression for validation is: coef * (buffer_size / "
+"2)\n"
+"    --test-nowait       do not wait for ring buffer - eats whole CPU\n"
+"    --max-file-time=#   start another output file when the old file has "
+"recorded\n"
+"                        for this many seconds\n"
+"    --process-id-file   write the process ID here\n"
+"    --use-strftime      apply the strftime facility to the output file name\n"
 msgstr ""
 "使用法: %s [オプション]... [ファイル]...\n"
 "\n"
@@ -82,7 +440,6 @@ msgstr ""
 "-f, --format=FORMAT     サンプルフォーマット (大／小文字区別)\n"
 "-r, --rate=#            サンプルレート\n"
 "-d, --duration=#        指定の秒数後に終了\n"
-"-s, --sleep-min=#       sleep する最少 tick 数\n"
 "-M, --mmap              mmap ストリーム\n"
 "-N, --nonblock          非ブロックモード\n"
 "-F, --period-time=#     割り込み間隔をμ秒で指定\n"
@@ -94,14 +451,23 @@ msgstr ""
 "                        (0 以下の場合はバッファサイズより)\n"
 "-T, --stop-delay=#      XRUN から指定のμ秒後に PCM の自動停止\n"
 "-v, --verbose           PCM の設定を表示 (複数指定可能)\n"
+"-V, --vumeter=TYPE      enable VU meter (TYPE: mono or stereo)\n"
 "-I, --separate-channels 各チャネルに一つのファイルを用いる\n"
+"    --disable-resample  自動レート変換を禁止する\n"
+"    --disable-channels  自動チャネル変換を禁止する\n"
+"    --disable-format    自動フォーマット変換を禁止する\n"
+"    --disable-softvol   ソフト音量制御(softvol)を禁止する\n"
+"    --test-position     リングバッファ位置をテストする\n"
+"    --test-coef=#       リングバッファ位置テストの係数 (デフォルト 8)\n"
+"                        テスト範囲: coef * (buffer_size / 2)\n"
+"    --test-nowait       リングバッファのウエイトを禁止 - 注意:高CPU負荷\n"
 
-#: aplay/aplay.c:193 speaker-test/speaker-test.c:783
+#: aplay/aplay.c:211 speaker-test/speaker-test.c:750
 #, c-format
 msgid "Recognized sample formats are:"
 msgstr "認識されるサンプルフォーマット:"
 
-#: aplay/aplay.c:199
+#: aplay/aplay.c:217
 #, c-format
 msgid ""
 "\n"
@@ -110,154 +476,159 @@ msgstr ""
 "\n"
 "これらのいくつかは指定のハードウェアで使用不可能な場合があります\n"
 
-#: aplay/aplay.c:200
+#: aplay/aplay.c:218
 #, c-format
 msgid "The availabled format shortcuts are:\n"
 msgstr "可能なフォーマットの省略形:\n"
 
-#: aplay/aplay.c:201
+#: aplay/aplay.c:219
 #, c-format
 msgid "-f cd (16 bit little endian, 44100, stereo)\n"
 msgstr "-f cd (16 ビット、リトルエンディアン、44100、ステレオ)\n"
 
-#: aplay/aplay.c:202
+#: aplay/aplay.c:220
 #, c-format
 msgid "-f cdr (16 bit big endian, 44100, stereo)\n"
 msgstr "-f cdr (16 ビット、ビッグエンディアン、44100、ステレオ)\n"
 
-#: aplay/aplay.c:203
+#: aplay/aplay.c:221
 #, c-format
 msgid "-f dat (16 bit little endian, 48000, stereo)\n"
 msgstr "-f dat (16 ビット、リトルエンディアン、48000、ステレオ)\n"
 
-#: aplay/aplay.c:217
+#: aplay/aplay.c:235
 msgid "no soundcards found..."
 msgstr "サウンドカードが見つかりません..."
 
-#: aplay/aplay.c:220
+#: aplay/aplay.c:238
 #, c-format
 msgid "**** List of %s Hardware Devices ****\n"
 msgstr "**** ハードウェアデバイス %s のリスト ****\n"
 
-#: aplay/aplay.c:249
+#: aplay/aplay.c:267
 #, c-format
 msgid "card %i: %s [%s], device %i: %s [%s]\n"
 msgstr "カード %i: %s [%s], デバイス %i: %s [%s]\n"
 
-#: aplay/aplay.c:255
+#: aplay/aplay.c:273
 #, c-format
 msgid "  Subdevices: %i/%i\n"
 msgstr "  サブデバイス: %i/%i\n"
 
-#: aplay/aplay.c:262
+#: aplay/aplay.c:280
 #, c-format
 msgid "  Subdevice #%i: %s\n"
 msgstr "  サブデバイス #%i: %s\n"
 
-#: aplay/aplay.c:326
+#: aplay/aplay.c:356
 #, c-format
 msgid "Aborted by signal %s...\n"
 msgstr "シグナル %s で中断...\n"
 
-#: aplay/aplay.c:420
+#: aplay/aplay.c:467
 msgid "command should be named either arecord or aplay"
 msgstr "arecord または aplay コマンドのみ可能"
 
-#: aplay/aplay.c:459
+#: aplay/aplay.c:506
 #, c-format
 msgid "unrecognized file format %s"
 msgstr "不正なファイルフォーマット %s"
 
-#: aplay/aplay.c:466
+#: aplay/aplay.c:513
 #, c-format
 msgid "value %i for channels is invalid"
 msgstr "不正なチャネル数 %i"
 
-#: aplay/aplay.c:485
+#: aplay/aplay.c:532
 #, c-format
 msgid "wrong extended format '%s'"
 msgstr "不正な拡張フォーマット '%s'"
 
-#: aplay/aplay.c:496
+#: aplay/aplay.c:543
 #, c-format
 msgid "bad speed value %i"
 msgstr "不正なレート値 %i"
 
-#: aplay/aplay.c:574
+#: aplay/aplay.c:638
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "より詳しい情報は「%s --help」を実行してください\n"
 
-#: aplay/aplay.c:590
+#: aplay/aplay.c:654
 #, c-format
 msgid "audio open error: %s"
 msgstr ""
 
-#: aplay/aplay.c:595
+#: aplay/aplay.c:659
 #, c-format
 msgid "info error: %s"
 msgstr ""
 
-#: aplay/aplay.c:602
+#: aplay/aplay.c:666
 #, c-format
 msgid "nonblock setting error: %s"
 msgstr ""
 
-#: aplay/aplay.c:612 aplay/aplay.c:719 aplay/aplay.c:1073
+#: aplay/aplay.c:676 aplay/aplay.c:800 aplay/aplay.c:1167
 msgid "not enough memory"
 msgstr "メモリが足りません"
 
-#: aplay/aplay.c:709
+#: aplay/aplay.c:700
+#, fuzzy, c-format
+msgid "Cannot create process ID file %s: %s"
+msgstr "WAVファイルがオープンできません: %s\n"
+
+#: aplay/aplay.c:790
 #, c-format
 msgid "read error (called from line %i)"
 msgstr "リードエラー (%i 行)"
 
-#: aplay/aplay.c:767
+#: aplay/aplay.c:848
 #, c-format
 msgid "unknown length of 'fmt ' chunk (read %u, should be %u at least)"
 msgstr ""
 
-#: aplay/aplay.c:777
+#: aplay/aplay.c:858
 #, c-format
 msgid ""
 "unknown length of extensible 'fmt ' chunk (read %u, should be %u at least)"
 msgstr ""
 
-#: aplay/aplay.c:782
+#: aplay/aplay.c:863
 msgid "wrong format tag in extensible 'fmt ' chunk"
 msgstr ""
 
-#: aplay/aplay.c:789
+#: aplay/aplay.c:870
 #, c-format
 msgid "can't play WAVE-file format 0x%04x which is not PCM or FLOAT encoded"
 msgstr ""
 
-#: aplay/aplay.c:793
+#: aplay/aplay.c:874
 #, c-format
 msgid "can't play WAVE-files with %d tracks"
 msgstr "%d トラックを含む WAVE ファイルは再生できません"
 
-#: aplay/aplay.c:801 aplay/aplay.c:901
+#: aplay/aplay.c:882 aplay/aplay.c:982
 #, c-format
 msgid "Warning: format is changed to U8\n"
 msgstr "警告: フォーマットは U8 に変更されます\n"
 
-#: aplay/aplay.c:807
+#: aplay/aplay.c:888
 #, c-format
 msgid "Warning: format is changed to S16_LE\n"
 msgstr "警告: フォーマットは S16_LE に変更されます\n"
 
-#: aplay/aplay.c:815
+#: aplay/aplay.c:896
 #, c-format
 msgid "Warning: format is changed to S24_3LE\n"
 msgstr "警告: フォーマットは S24_3LE に変更されます\n"
 
-#: aplay/aplay.c:821
+#: aplay/aplay.c:902
 #, c-format
 msgid "Warning: format is changed to S24_LE\n"
 msgstr "警告: フォーマットは S24_LE に変更されます\n"
 
-#: aplay/aplay.c:825
+#: aplay/aplay.c:906
 #, c-format
 msgid ""
 " can't play WAVE-files with sample %d bits in %d bytes wide (%d channels)"
@@ -265,254 +636,261 @@ msgstr ""
 "%2$d バイト長 %1$d サンプルビット (%3$d チャネル) の WAVE ファイルは再生でき"
 "ません"
 
-#: aplay/aplay.c:837
+#: aplay/aplay.c:918
 #, c-format
 msgid " can't play WAVE-files with sample %d bits wide"
 msgstr "%d ビット長のサンプルの WAVE ファイルは再生できません"
 
-#: aplay/aplay.c:895
+#: aplay/aplay.c:976
 #, c-format
 msgid "Warning: format is changed to MU_LAW\n"
 msgstr "警告: フォーマットは MU_LAW に変更されます\n"
 
-#: aplay/aplay.c:907
+#: aplay/aplay.c:988
 #, c-format
 msgid "Warning: format is changed to S16_BE\n"
 msgstr "警告: フォーマットは S16_BE に変更されます\n"
 
-#: aplay/aplay.c:920 aplay/aplay.c:1679 aplay/aplay.c:1686 aplay/aplay.c:2208
-#: aplay/aplay.c:2220
+#: aplay/aplay.c:1001 aplay/aplay.c:1843 aplay/aplay.c:1850 aplay/aplay.c:2372
+#: aplay/aplay.c:2384
 msgid "read error"
 msgstr "リードエラー"
 
-#: aplay/aplay.c:939
+#: aplay/aplay.c:1031
 msgid "Broken configuration for this PCM: no configurations available"
 msgstr "指定の PCM を使用できません: 設定がありません"
 
-#: aplay/aplay.c:956
+#: aplay/aplay.c:1048
 msgid "Access type not available"
 msgstr "アクセスタイプが使用不可能"
 
-#: aplay/aplay.c:961
+#: aplay/aplay.c:1053
 msgid "Sample format non available"
 msgstr "サンプルフォーマットが使用不可能"
 
-#: aplay/aplay.c:966
+#: aplay/aplay.c:1059
 msgid "Channels count non available"
 msgstr "チャネル数が使用不可能"
 
-#: aplay/aplay.c:981
+#: aplay/aplay.c:1074
 #, c-format
 msgid "Warning: rate is not accurate (requested = %iHz, got = %iHz)\n"
 msgstr "警告: レートが不正確です (要求値 = %iHz, 使用値 = %iHz)\n"
 
-#: aplay/aplay.c:987
+#: aplay/aplay.c:1080
 #, c-format
 msgid "         please, try the plug plugin %s\n"
 msgstr "        plug プラグイン%s を使用してください\n"
 
-#: aplay/aplay.c:1022
+#: aplay/aplay.c:1116
 msgid "Unable to install hw params:"
 msgstr "hw params のインストールに失敗しました:"
 
-#: aplay/aplay.c:1029
+#: aplay/aplay.c:1123
 #, c-format
 msgid "Can't use period equal to buffer size (%lu == %lu)"
 msgstr "period と buffer サイズには同じ値を使用できません (%lu == %lu)"
 
-#: aplay/aplay.c:1060
+#: aplay/aplay.c:1154
 msgid "unable to install sw params:"
 msgstr "sw params のインストールに失敗しました:"
 
-#: aplay/aplay.c:1123
+#: aplay/aplay.c:1229
 #, c-format
 msgid "status error: %s"
 msgstr "ステータスエラー: %s"
 
-#: aplay/aplay.c:1131
+#: aplay/aplay.c:1239 aplay/aplay.c:1250
 #, c-format
 msgid "%s!!! (at least %.3f ms long)\n"
 msgstr "%s!!! (少なくとも %.3f ms)\n"
 
-#: aplay/aplay.c:1132
+#: aplay/aplay.c:1240 aplay/aplay.c:1243 aplay/aplay.c:1251
 msgid "underrun"
 msgstr "アンダーラン"
 
-#: aplay/aplay.c:1132
+#: aplay/aplay.c:1240 aplay/aplay.c:1251
 msgid "overrun"
 msgstr "オーバーラン"
 
-#: aplay/aplay.c:1135
+#: aplay/aplay.c:1255
 #, c-format
 msgid "Status:\n"
 msgstr "ステータス:\n"
 
-#: aplay/aplay.c:1139
+#: aplay/aplay.c:1259
 #, c-format
 msgid "xrun: prepare error: %s"
 msgstr ""
 
-#: aplay/aplay.c:1145
+#: aplay/aplay.c:1265
 #, c-format
 msgid "Status(DRAINING):\n"
 msgstr "ステータス(DRAINING):\n"
 
-#: aplay/aplay.c:1149
+#: aplay/aplay.c:1269
 #, c-format
 msgid "capture stream format change? attempting recover...\n"
 msgstr "録音ストリームのフォーマットが変更？ 修復を試みます...\n"
 
-#: aplay/aplay.c:1151
+#: aplay/aplay.c:1271
 #, c-format
 msgid "xrun(DRAINING): prepare error: %s"
 msgstr ""
 
-#: aplay/aplay.c:1158
+#: aplay/aplay.c:1278
 #, c-format
 msgid "Status(R/W):\n"
 msgstr "ステータス(R/W):\n"
 
-#: aplay/aplay.c:1161
+#: aplay/aplay.c:1281
 #, c-format
 msgid "read/write error, state = %s"
 msgstr "読み書きエラー, ステータス = %s"
 
-#: aplay/aplay.c:1171
+#: aplay/aplay.c:1291
 #, c-format
 msgid "Suspended. Trying resume. "
 msgstr "サスペンド中です。レジュームします。"
 
-#: aplay/aplay.c:1176
+#: aplay/aplay.c:1296
 #, c-format
 msgid "Failed. Restarting stream. "
 msgstr "失敗しました。ストリームを再スタートします。"
 
-#: aplay/aplay.c:1178
+#: aplay/aplay.c:1298
 #, c-format
 msgid "suspend: prepare error: %s"
 msgstr "サスペンド: prepare エラー: %s"
 
-#: aplay/aplay.c:1183
+#: aplay/aplay.c:1303
 #, c-format
 msgid "Done.\n"
 msgstr "終了\n"
 
-#: aplay/aplay.c:1205
+#: aplay/aplay.c:1325
 #, c-format
 msgid " !clip  "
 msgstr ""
 
-#: aplay/aplay.c:1352
+#: aplay/aplay.c:1472
 #, c-format
 msgid "Unsupported bit size %d.\n"
 msgstr ""
 
-#: aplay/aplay.c:1386
+#: aplay/aplay.c:1506
 #, c-format
 msgid "Max peak (%li samples): 0x%08x "
 msgstr "最大ピーク (%li サンプル): 0x%08x "
 
-#: aplay/aplay.c:1442
+#: aplay/aplay.c:1540
+#, c-format
+msgid ""
+"Suspicious buffer position (%li total): avail = %li, delay = %li, buffer = %"
+"li\n"
+msgstr ""
+
+#: aplay/aplay.c:1603
 #, c-format
 msgid "write error: %s"
 msgstr "書込エラー: %s"
 
-#: aplay/aplay.c:1487
+#: aplay/aplay.c:1649
 #, c-format
 msgid "writev error: %s"
 msgstr "書込(writev)エラー: %s"
 
-#: aplay/aplay.c:1529
+#: aplay/aplay.c:1692
 #, c-format
 msgid "read error: %s"
 msgstr "読込エラー: %s"
 
-#: aplay/aplay.c:1571
+#: aplay/aplay.c:1735
 #, c-format
 msgid "readv error: %s"
 msgstr "読込(readv)エラー: %s"
 
-#: aplay/aplay.c:1619
+#: aplay/aplay.c:1783
 msgid "can't allocate buffer for silence"
 msgstr "サイレンス用のバッファの取得に失敗しました"
 
-#: aplay/aplay.c:1628 aplay/aplay.c:1854 aplay/aplay.c:1859 aplay/aplay.c:1906
-#: aplay/aplay.c:1915 aplay/aplay.c:1922 aplay/aplay.c:1932 aplay/aplay.c:1938
-#: aplay/aplay.c:2010 aplay/aplay.c:2040 aplay/aplay.c:2054
+#: aplay/aplay.c:1792 aplay/aplay.c:2018 aplay/aplay.c:2023 aplay/aplay.c:2070
+#: aplay/aplay.c:2079 aplay/aplay.c:2086 aplay/aplay.c:2096 aplay/aplay.c:2102
+#: aplay/aplay.c:2174 aplay/aplay.c:2204 aplay/aplay.c:2218
 msgid "write error"
 msgstr "書込エラー"
 
-#: aplay/aplay.c:1641
+#: aplay/aplay.c:1805
 #, c-format
 msgid "voc_pcm_flush - silence error"
 msgstr ""
 
-#: aplay/aplay.c:1644
+#: aplay/aplay.c:1808
 msgid "voc_pcm_flush error"
 msgstr ""
 
-#: aplay/aplay.c:1670
+#: aplay/aplay.c:1834
 msgid "malloc error"
 msgstr "malloc エラー"
 
-#: aplay/aplay.c:1674
+#: aplay/aplay.c:1838
 #, c-format
 msgid "Playing Creative Labs Channel file '%s'...\n"
 msgstr "Creative Labs Channel ファイル '%s' を演奏中...\n"
 
-#: aplay/aplay.c:1742 aplay/aplay.c:1834
+#: aplay/aplay.c:1906 aplay/aplay.c:1998
 msgid "can't play packed .voc files"
 msgstr "packed .voc ファイルは演奏できません"
 
-#: aplay/aplay.c:1794
+#: aplay/aplay.c:1958
 #, c-format
 msgid "can't play loops; %s isn't seekable\n"
 msgstr "ループ演奏できません。%s はシーク不可能です\n"
 
-#: aplay/aplay.c:1843
+#: aplay/aplay.c:2007
 #, c-format
 msgid "unknown blocktype %d. terminate."
 msgstr "未知のブロックタイプ %d: 終了します。"
 
-#: aplay/aplay.c:1974
+#: aplay/aplay.c:2138
 #, c-format
 msgid "Wave doesn't support %s format..."
 msgstr "WAVE は %s フォーマットをサポートしません..."
 
-#: aplay/aplay.c:2034
+#: aplay/aplay.c:2198
 #, c-format
 msgid "Sparc Audio doesn't support %s format..."
 msgstr "Sparc オーディオは %s フォーマットをサポートしません..."
 
-#: aplay/aplay.c:2115
+#: aplay/aplay.c:2279
 msgid "Playing"
 msgstr "再生中"
 
-#: aplay/aplay.c:2115
+#: aplay/aplay.c:2279
 msgid "Recording"
 msgstr "録音中"
 
-#: aplay/aplay.c:2119
+#: aplay/aplay.c:2283
 #, c-format
 msgid "Rate %d Hz, "
 msgstr "レート %d Hz, "
 
-#: aplay/aplay.c:2121
+#: aplay/aplay.c:2285
 #, c-format
 msgid "Mono"
 msgstr "モノラル"
 
-#: aplay/aplay.c:2123
+#: aplay/aplay.c:2287
 #, c-format
 msgid "Stereo"
 msgstr "ステレオ"
 
-#: aplay/aplay.c:2125
+#: aplay/aplay.c:2289
 #, c-format
 msgid "Channels %i"
 msgstr "チャネル数 %i"
 
-#: aplay/aplay.c:2484 aplay/aplay.c:2537
+#: aplay/aplay.c:2798 aplay/aplay.c:2851
 #, c-format
 msgid "You need to specify %d files"
 msgstr "%d 個のファイルを指定してください"
@@ -623,47 +1001,47 @@ msgstr "ユーザ"
 msgid "kernel"
 msgstr "カーネル"
 
-#: seq/aconnect/aconnect.c:326
+#: seq/aconnect/aconnect.c:307
 #, c-format
 msgid "can't open sequencer\n"
 msgstr "sequencer をオープンできません\n"
 
-#: seq/aconnect/aconnect.c:354
+#: seq/aconnect/aconnect.c:335
 #, c-format
 msgid "can't get client id\n"
 msgstr "クライアント ID を取得できません\n"
 
-#: seq/aconnect/aconnect.c:361
+#: seq/aconnect/aconnect.c:342
 #, c-format
 msgid "can't set client info\n"
 msgstr "クライアント情報を取得できません\n"
 
-#: seq/aconnect/aconnect.c:368
+#: seq/aconnect/aconnect.c:349
 #, c-format
 msgid "invalid sender address %s\n"
 msgstr "送信アドレスが不正です: %s\n"
 
-#: seq/aconnect/aconnect.c:373 seq/aseqnet/aseqnet.c:290
+#: seq/aconnect/aconnect.c:354 seq/aseqnet/aseqnet.c:290
 #, c-format
 msgid "invalid destination address %s\n"
 msgstr "受信アドレスが不正です: %s\n"
 
-#: seq/aconnect/aconnect.c:387
+#: seq/aconnect/aconnect.c:368
 #, c-format
 msgid "No subscription is found\n"
 msgstr "接続が見つかりません\n"
 
-#: seq/aconnect/aconnect.c:392
+#: seq/aconnect/aconnect.c:373
 #, c-format
 msgid "Disconnection failed (%s)\n"
 msgstr "切り離しに失敗 (%s)\n"
 
-#: seq/aconnect/aconnect.c:398
+#: seq/aconnect/aconnect.c:379
 #, c-format
 msgid "Connection is already subscribed\n"
 msgstr "既に接続されています\n"
 
-#: seq/aconnect/aconnect.c:403
+#: seq/aconnect/aconnect.c:384
 #, c-format
 msgid "Connection failed (%s)\n"
 msgstr "接続に失敗 (%s)\n"
@@ -793,261 +1171,257 @@ msgstr "チャネル %2d: ノートオフ   : %5d\n"
 msgid "disconnected\n"
 msgstr "切り離し\n"
 
-#: speaker-test/speaker-test.c:88
+#: speaker-test/speaker-test.c:103
 msgid "Front Left"
 msgstr ""
 
-#: speaker-test/speaker-test.c:89
+#: speaker-test/speaker-test.c:104
 msgid "Front Right"
 msgstr ""
 
-#: speaker-test/speaker-test.c:90
+#: speaker-test/speaker-test.c:105
 msgid "Rear Left"
 msgstr ""
 
-#: speaker-test/speaker-test.c:91
+#: speaker-test/speaker-test.c:106
 msgid "Rear Right"
 msgstr ""
 
-#: speaker-test/speaker-test.c:92
-msgid "Center"
-msgstr ""
-
-#: speaker-test/speaker-test.c:93
+#: speaker-test/speaker-test.c:108
 msgid "LFE"
 msgstr ""
 
-#: speaker-test/speaker-test.c:94
+#: speaker-test/speaker-test.c:109
 msgid "Side Left"
 msgstr ""
 
-#: speaker-test/speaker-test.c:95
+#: speaker-test/speaker-test.c:110
 msgid "Side Right"
 msgstr ""
 
-#: speaker-test/speaker-test.c:96
+#: speaker-test/speaker-test.c:111
 msgid "Channel 9"
 msgstr ""
 
-#: speaker-test/speaker-test.c:97
+#: speaker-test/speaker-test.c:112
 msgid "Channel 10"
 msgstr ""
 
-#: speaker-test/speaker-test.c:98
+#: speaker-test/speaker-test.c:113
 msgid "Channel 11"
 msgstr ""
 
-#: speaker-test/speaker-test.c:99
+#: speaker-test/speaker-test.c:114
 msgid "Channel 12"
 msgstr ""
 
-#: speaker-test/speaker-test.c:100
+#: speaker-test/speaker-test.c:115
 msgid "Channel 13"
 msgstr ""
 
-#: speaker-test/speaker-test.c:101
+#: speaker-test/speaker-test.c:116
 msgid "Channel 14"
 msgstr ""
 
-#: speaker-test/speaker-test.c:102
+#: speaker-test/speaker-test.c:117
 msgid "Channel 15"
 msgstr ""
 
-#: speaker-test/speaker-test.c:103
+#: speaker-test/speaker-test.c:118
 msgid "Channel 16"
 msgstr ""
 
-#: speaker-test/speaker-test.c:340
+#: speaker-test/speaker-test.c:317
 #, c-format
 msgid "Broken configuration for playback: no configurations available: %s\n"
 msgstr "再生用に設定できません: 設定がみつかりません: %s\n"
 
-#: speaker-test/speaker-test.c:347
+#: speaker-test/speaker-test.c:324
 #, c-format
 msgid "Access type not available for playback: %s\n"
 msgstr "アクセスタイプが不正です: %s\n"
 
-#: speaker-test/speaker-test.c:354
+#: speaker-test/speaker-test.c:331
 #, c-format
 msgid "Sample format not available for playback: %s\n"
 msgstr "指定のサンプルフォーマットを使用できません: %s\n"
 
-#: speaker-test/speaker-test.c:361
+#: speaker-test/speaker-test.c:338
 #, c-format
 msgid "Channels count (%i) not available for playbacks: %s\n"
 msgstr "チャネル数 (%i) を使用できません: %s\n"
 
-#: speaker-test/speaker-test.c:369
+#: speaker-test/speaker-test.c:346
 #, c-format
 msgid "Rate %iHz not available for playback: %s\n"
 msgstr "レート %iHz を使用できません: %s\n"
 
-#: speaker-test/speaker-test.c:374
+#: speaker-test/speaker-test.c:351
 #, c-format
 msgid "Rate doesn't match (requested %iHz, get %iHz, err %d)\n"
 msgstr "設定レートが一致しません< (要求値 %iHz, 取得値 %iHz, エラー %d)\n"
 
-#: speaker-test/speaker-test.c:378
+#: speaker-test/speaker-test.c:355
 #, c-format
 msgid "Rate set to %iHz (requested %iHz)\n"
 msgstr "レート %iHz (要求値 %iHz)\n"
 
-#: speaker-test/speaker-test.c:384
+#: speaker-test/speaker-test.c:361
 #, c-format
 msgid "Buffer size range from %lu to %lu\n"
 msgstr "バッファサイズ範囲 %lu 〜 %lu\n"
 
-#: speaker-test/speaker-test.c:385
+#: speaker-test/speaker-test.c:362
 #, c-format
 msgid "Period size range from %lu to %lu\n"
 msgstr "ピリオドサイズ範囲 %lu 〜 %lu\n"
 
-#: speaker-test/speaker-test.c:387
+#: speaker-test/speaker-test.c:364
 #, c-format
 msgid "Requested period time %u us\n"
 msgstr "要求されたピリオド長 %u us\n"
 
-#: speaker-test/speaker-test.c:390
+#: speaker-test/speaker-test.c:367
 #, c-format
 msgid "Unable to set period time %u us for playback: %s\n"
 msgstr "ピリオド長 %u us を設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:396
+#: speaker-test/speaker-test.c:373
 #, c-format
 msgid "Requested buffer time %u us\n"
 msgstr "要求されたバッファ長 %u us\n"
 
-#: speaker-test/speaker-test.c:399
+#: speaker-test/speaker-test.c:376
 #, c-format
 msgid "Unable to set buffer time %u us for playback: %s\n"
 msgstr "バッファ長 %u us を設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:408
+#: speaker-test/speaker-test.c:385
 #, c-format
 msgid "Using max buffer size %lu\n"
 msgstr "最大バッファサイズ %lu を使用\n"
 
-#: speaker-test/speaker-test.c:411
+#: speaker-test/speaker-test.c:388
 #, c-format
 msgid "Unable to set buffer size %lu for playback: %s\n"
 msgstr "バッファサイズ %lu を設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:417
+#: speaker-test/speaker-test.c:394
 #, c-format
 msgid "Periods = %u\n"
 msgstr "ピリオド数 = %u\n"
 
-#: speaker-test/speaker-test.c:420
+#: speaker-test/speaker-test.c:397
 #, c-format
 msgid "Unable to set nperiods %u for playback: %s\n"
 msgstr "ピリオド数 %u を設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:429
+#: speaker-test/speaker-test.c:406
 #, c-format
 msgid "Unable to set hw params for playback: %s\n"
 msgstr "hw params を設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:435
+#: speaker-test/speaker-test.c:412
 #, c-format
 msgid "was set period_size = %lu\n"
 msgstr "period_size = %lu で設定\n"
 
-#: speaker-test/speaker-test.c:436
+#: speaker-test/speaker-test.c:413
 #, c-format
 msgid "was set buffer_size = %lu\n"
 msgstr "buffer_size = %lu で設定\n"
 
-#: speaker-test/speaker-test.c:438
+#: speaker-test/speaker-test.c:415
 #, c-format
 msgid "buffer to small, could not use\n"
 msgstr "バッファが小さすぎます\n"
 
-#: speaker-test/speaker-test.c:451
+#: speaker-test/speaker-test.c:428
 #, c-format
 msgid "Unable to determine current swparams for playback: %s\n"
 msgstr "現在の swparams を取得できません: %s\n"
 
-#: speaker-test/speaker-test.c:458
+#: speaker-test/speaker-test.c:435
 #, c-format
 msgid "Unable to set start threshold mode for playback: %s\n"
 msgstr "start_threshold モードを設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:465
+#: speaker-test/speaker-test.c:442
 #, c-format
 msgid "Unable to set avail min for playback: %s\n"
 msgstr "avail_min を設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:472
+#: speaker-test/speaker-test.c:449
 #, c-format
 msgid "Unable to set sw params for playback: %s\n"
 msgstr "再生用の sw params を設定できません: %s\n"
 
-#: speaker-test/speaker-test.c:487
+#: speaker-test/speaker-test.c:464
 #, c-format
 msgid "Can't recovery from underrun, prepare failed: %s\n"
 msgstr "アンダーランから復帰失敗: %s\n"
 
-#: speaker-test/speaker-test.c:498
+#: speaker-test/speaker-test.c:475
 #, c-format
 msgid "Can't recovery from suspend, prepare failed: %s\n"
 msgstr "サスペンドから復帰失敗: %s\n"
 
-#: speaker-test/speaker-test.c:572 speaker-test/speaker-test.c:969
+#: speaker-test/speaker-test.c:539 speaker-test/speaker-test.c:954
 #, c-format
 msgid "No enough memory\n"
 msgstr "メモリが足りません\n"
 
-#: speaker-test/speaker-test.c:577
+#: speaker-test/speaker-test.c:544
 #, c-format
 msgid "Cannot open WAV file %s\n"
 msgstr "WAVファイルがオープンできません: %s\n"
 
-#: speaker-test/speaker-test.c:581 speaker-test/speaker-test.c:610
+#: speaker-test/speaker-test.c:548 speaker-test/speaker-test.c:577
 #, c-format
 msgid "Invalid WAV file %s\n"
 msgstr "不正なWAVファイルです: %s\n"
 
-#: speaker-test/speaker-test.c:586
+#: speaker-test/speaker-test.c:553
 #, c-format
 msgid "Not a WAV file: %s\n"
 msgstr "WAVファイルではありません: %s\n"
 
-#: speaker-test/speaker-test.c:590
+#: speaker-test/speaker-test.c:557
 #, c-format
 msgid "Unsupported WAV format %d for %s\n"
 msgstr "未サポートのWAVフォーマット %d: %s\n"
 
-#: speaker-test/speaker-test.c:595
+#: speaker-test/speaker-test.c:562
 #, c-format
 msgid "%s is not a mono stream (%d channels)\n"
 msgstr "%s はモノストリームではありません (%d チャネル)\n"
 
-#: speaker-test/speaker-test.c:600
+#: speaker-test/speaker-test.c:567
 #, c-format
 msgid "Sample rate doesn't match (%d) for %s\n"
 msgstr "サンプルレートが不一致です(%d): %s\n"
 
-#: speaker-test/speaker-test.c:605
+#: speaker-test/speaker-test.c:572
 #, c-format
 msgid "Unsupported sample format bits %d for %s\n"
 msgstr "未サポートのサンプルフォーマットビット %d: %s\n"
 
-#: speaker-test/speaker-test.c:655
+#: speaker-test/speaker-test.c:622
 #, c-format
 msgid "Undefined channel %d\n"
 msgstr "未定義のチャネル %d\n"
 
-#: speaker-test/speaker-test.c:706
+#: speaker-test/speaker-test.c:673
 #, c-format
 msgid "Write error: %d,%s\n"
 msgstr "書込エラー: %d,%s\n"
 
-#: speaker-test/speaker-test.c:708
+#: speaker-test/speaker-test.c:675
 #, c-format
 msgid "xrun_recovery failed: %d,%s\n"
 msgstr "xrun_recovery 失敗: %d,%s\n"
 
-#: speaker-test/speaker-test.c:766
+#: speaker-test/speaker-test.c:734
 #, c-format
 msgid ""
 "Usage: speaker-test [OPTION]... \n"
@@ -1085,93 +1459,72 @@ msgstr ""
 "-W,--wavdir          WAVファイルのあるディレクトリを指定\n"
 "\n"
 
-#: speaker-test/speaker-test.c:878
+#: speaker-test/speaker-test.c:852
 #, c-format
 msgid "Invalid number of periods %d\n"
 msgstr "不正なピリオド数 %d\n"
 
-#: speaker-test/speaker-test.c:892 speaker-test/speaker-test.c:896
+#: speaker-test/speaker-test.c:866 speaker-test/speaker-test.c:870
 #, c-format
 msgid "Invalid test type %s\n"
 msgstr "不正なテストタイプ %s\n"
 
-#: speaker-test/speaker-test.c:908
+#: speaker-test/speaker-test.c:882
 #, c-format
 msgid "Invalid parameter for -s option.\n"
 msgstr "-s オプションの値が不正です\n"
 
-#: speaker-test/speaker-test.c:919
+#: speaker-test/speaker-test.c:896
 #, c-format
 msgid "Unknown option '%c'\n"
 msgstr "未知のオプション '%c'\n"
 
-#: speaker-test/speaker-test.c:933
+#: speaker-test/speaker-test.c:910
 #, c-format
 msgid "Playback device is %s\n"
 msgstr "再生デバイス: %s\n"
 
-#: speaker-test/speaker-test.c:934
+#: speaker-test/speaker-test.c:911
 #, c-format
 msgid "Stream parameters are %iHz, %s, %i channels\n"
 msgstr "ストリームパラメータ: %iHz, %s, %i チャネル\n"
 
-#: speaker-test/speaker-test.c:937
+#: speaker-test/speaker-test.c:914
 #, c-format
 msgid "Using 16 octaves of pink noise\n"
 msgstr "16 オクターブのピンクノイズを使用\n"
 
-#: speaker-test/speaker-test.c:940
+#: speaker-test/speaker-test.c:917
 #, c-format
 msgid "Sine wave rate is %.4fHz\n"
 msgstr "正弦波レート: %.4fHz\n"
 
-#: speaker-test/speaker-test.c:943
+#: speaker-test/speaker-test.c:920
 #, c-format
 msgid "WAV file(s)\n"
 msgstr "WAV ファイル\n"
 
-#: speaker-test/speaker-test.c:949
+#: speaker-test/speaker-test.c:926
 #, c-format
 msgid "Playback open error: %d,%s\n"
 msgstr "再生オープンエラー: %d,%s\n"
 
-#: speaker-test/speaker-test.c:954
+#: speaker-test/speaker-test.c:931
 #, c-format
 msgid "Setting of hwparams failed: %s\n"
 msgstr "hwparams の設定に失敗: %s\n"
 
-#: speaker-test/speaker-test.c:959
+#: speaker-test/speaker-test.c:936
 #, c-format
 msgid "Setting of swparams failed: %s\n"
 msgstr "swparams の設定に失敗: %s\n"
 
-#: speaker-test/speaker-test.c:1000 speaker-test/speaker-test.c:1022
+#: speaker-test/speaker-test.c:985 speaker-test/speaker-test.c:1007
 #, c-format
 msgid "Transfer failed: %s\n"
 msgstr "転送に失敗しました: %s\n"
 
-#: speaker-test/speaker-test.c:1010
+#: speaker-test/speaker-test.c:995
 #, c-format
 msgid "Time per period = %lf\n"
 msgstr "ピリオド時間 = %lf\n"
-
-#~ msgid "can't play not PCM-coded WAVE-files"
-#~ msgstr "PCM 以外の WAVE ファイルは再生できません"
-
-#~ msgid "Unable to obtain xfer align\n"
-#~ msgstr "xfer align 値を得ることができません\n"
-
-#~ msgid "Unable to set transfer align for playback: %s\n"
-#~ msgstr "転送 align を設定できません: %s\n"
-
-#~ msgid "snd_names_list error: %s"
-#~ msgstr "snd_names_list エラー: %s"
-
-#~ msgid "PCM list:\n"
-#~ msgstr "PCM リスト:\n"
-
-#~ msgid "Output failed: %s\n"
-#~ msgstr "出力失敗: %s\n"
-
-#~ msgid "Pausing\n"
-#~ msgstr "停止中\n"

@@ -35,6 +35,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@ALSAMIXER_TRUE@am__append_1 = alsamixer
+@HAVE_MIXER_TRUE@am__append_2 = amixer
+@HAVE_RAWMIDI_TRUE@am__append_3 = amidi
+@ALSACONF_TRUE@am__append_4 = alsaconf
+@HAVE_PCM_TRUE@am__append_5 = aplay iecset speaker-test
+@HAVE_SEQ_TRUE@am__append_6 = seq
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/alsaconf/po/Makefile.in \
 	$(top_srcdir)/configure ABOUT-NLS COPYING ChangeLog INSTALL \
@@ -65,8 +71,8 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	uninstall-recursive
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = include alsactl alsaconf alsamixer amidi amixer aplay \
-	iecset seq speaker-test utils m4 po
+DIST_SUBDIRS = include alsactl utils m4 po alsamixer amixer amidi \
+	alsaconf aplay iecset speaker-test seq
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -111,6 +117,14 @@ EXEEXT = @EXEEXT@
 GMSGFMT = @GMSGFMT@
 GMSGFMT_015 = @GMSGFMT_015@
 GREP = @GREP@
+HAVE_MIXER_FALSE = @HAVE_MIXER_FALSE@
+HAVE_MIXER_TRUE = @HAVE_MIXER_TRUE@
+HAVE_PCM_FALSE = @HAVE_PCM_FALSE@
+HAVE_PCM_TRUE = @HAVE_PCM_TRUE@
+HAVE_RAWMIDI_FALSE = @HAVE_RAWMIDI_FALSE@
+HAVE_RAWMIDI_TRUE = @HAVE_RAWMIDI_TRUE@
+HAVE_SEQ_FALSE = @HAVE_SEQ_FALSE@
+HAVE_SEQ_TRUE = @HAVE_SEQ_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -121,6 +135,7 @@ LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
+LIBRT = @LIBRT@
 LIBS = @LIBS@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
@@ -200,13 +215,9 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 xmlto = @xmlto@
 INCLUDES = -I$(top_srcdir)/include
-@ALSAMIXER_FALSE@ALSAMIXER_DIR = 
-@ALSAMIXER_TRUE@ALSAMIXER_DIR = alsamixer
-@ALSACONF_FALSE@ALSACONF_DIR = 
-@ALSACONF_TRUE@ALSACONF_DIR = alsaconf
-SUBDIRS = include alsactl $(ALSACONF_DIR) $(ALSAMIXER_DIR) amidi amixer \
-	 aplay iecset seq speaker-test utils m4 po
-
+SUBDIRS = include alsactl utils m4 po $(am__append_1) $(am__append_2) \
+	$(am__append_3) $(am__append_4) $(am__append_5) \
+	$(am__append_6)
 EXTRA_DIST = config.rpath  TODO gitcompile
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4

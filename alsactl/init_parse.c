@@ -382,7 +382,7 @@ static int set_ctl_value(struct space *space, const char *value, int all)
 				snd_ctl_elem_value_set_integer(space->ctl_value, idx, val);
 			} else if (items > 2 && value[items-2] == 'd' && value[items-1] == 'B') {
 				val = strtol(value, NULL, 0) * 100;
-				if ((pos2 = index(value, '.')) != NULL) {
+				if ((pos2 = strchr(value, '.')) != NULL) {
 					if (isdigit(*(pos2-1)) && isdigit(*(pos2-2))) {
 						if (val < 0)
 							val -= strtol(pos2 + 1, NULL, 0);
@@ -397,7 +397,7 @@ static int set_ctl_value(struct space *space, const char *value, int all)
 				}
 				val = snd_ctl_convert_from_dB(snd_hctl_ctl(space->ctl_handle), space->ctl_id, val, &lval, -1);
 				if (val < 0) {
-					Perror(space, "unable to convert dB value '%s' to internal integer range", value);
+					dbg("unable to convert dB value '%s' to internal integer range", value);
 					return val;
 				}
 				snd_ctl_elem_value_set_integer(space->ctl_value, idx, lval);
@@ -484,6 +484,46 @@ static int set_ctl_value(struct space *space, const char *value, int all)
   	printf("%i %i\n", type, count);
   	Perror(space, "missing some ctl values (line %i)", space->linenum);
   	return -EINVAL;
+}
+
+static int do_match(const char *key, enum key_op op,
+		    const char *key_value, const char *value)
+{
+	int match;
+
+	if (value == NULL)
+		return 0;
+	dbg("match %s '%s' <-> '%s'", key, key_value, value);
+	match = fnmatch(key_value, value, 0) == 0;
+	if (match && op == KEY_OP_MATCH) {
+		dbg("%s is true (matching value)", key);
+		return 1;
+	}
+	if (!match && op == KEY_OP_NOMATCH) {
+		dbg("%s is true (non-matching value)", key);
+		return 1;
+	}
+	dbg("%s is false", key);
+	return 0;
+}
+
+static int ctl_match(snd_ctl_elem_id_t *pattern, snd_ctl_elem_id_t *id)
+{
+	if (snd_ctl_elem_id_get_interface(pattern) != -1 &&
+	    snd_ctl_elem_id_get_interface(pattern) != snd_ctl_elem_id_get_interface(id))
+	    	return 0;
+	if (snd_ctl_elem_id_get_device(pattern) != -1 &&
+	    snd_ctl_elem_id_get_device(pattern) != snd_ctl_elem_id_get_device(id))
+		return 0;
+	if (snd_ctl_elem_id_get_subdevice(pattern) != -1 &&
+	    snd_ctl_elem_id_get_subdevice(pattern) != snd_ctl_elem_id_get_subdevice(id))
+	    	return 0;
+	if (snd_ctl_elem_id_get_index(pattern) != -1 &&
+	    snd_ctl_elem_id_get_index(pattern) != snd_ctl_elem_id_get_index(id))
+	    	return 0;
+	if (fnmatch(snd_ctl_elem_id_get_name(pattern), snd_ctl_elem_id_get_name(id), 0) != 0)
+		return 0;
+	return 1;
 }
 
 static const char *elemid_get(struct space *space, const char *attr)
@@ -648,6 +688,56 @@ dbvalue:
 			strlcat(res, snd_ctl_elem_info_get_item_name(space->ctl_info), sizeof(res));
 			strlcat(res, "|", sizeof(res));
 		}
+		return res;
+	}
+	if (strncasecmp(attr, "do_search", 9) == 0) {
+		int err, index = 0;
+		snd_hctl_elem_t *elem;
+		snd_ctl_elem_id_t *id;
+		char *pos = strchr(attr, ' ');
+		if (pos)
+			index = strtol(pos, NULL, 0);
+		err = snd_ctl_elem_id_malloc(&id);
+		if (err < 0)
+			return NULL;
+		elem = snd_hctl_first_elem(space->ctl_handle);
+		while (elem) {
+			snd_hctl_elem_get_id(elem, id);
+			if (!ctl_match(space->ctl_id, id))
+				goto next_search;
+			if (index > 0) {
+				index--;
+				goto next_search;
+			}
+			strcpy(res, "1");
+			snd_ctl_elem_id_copy(space->ctl_id, id);
+			snd_ctl_elem_id_free(id);
+			dbg("do_ctl_search found a control");
+			return res;
+		      next_search:
+			elem = snd_hctl_elem_next(elem);
+		}
+		snd_ctl_elem_id_free(id);
+		strcpy(res, "0");
+		return res;
+	}
+	if (strncasecmp(attr, "do_count", 8) == 0) {
+		int err, index = 0;
+		snd_hctl_elem_t *elem;
+		snd_ctl_elem_id_t *id;
+		err = snd_ctl_elem_id_malloc(&id);
+		if (err < 0)
+			return NULL;
+		elem = snd_hctl_first_elem(space->ctl_handle);
+		while (elem) {
+			snd_hctl_elem_get_id(elem, id);
+			if (ctl_match(space->ctl_id, id))
+				index++;
+			elem = snd_hctl_elem_next(elem);
+		}
+		snd_ctl_elem_id_free(id);
+		sprintf(res, "%u", index);
+		dbg("do_ctl_count found %s controls", res);
 		return res;
 	}
 	Perror(space, "unknown ctl{} attribute '%s'", attr);
@@ -930,6 +1020,7 @@ static void apply_format(struct space *space, char *string, size_t maxsize)
 		SUBST_ATTR,
 		SUBST_SYSFSROOT,
 		SUBST_ENV,
+		SUBST_CONFIG,
 	};
 	static const struct subst_map {
 		char *name;
@@ -942,6 +1033,7 @@ static void apply_format(struct space *space, char *string, size_t maxsize)
 		{ .name = "attr",	.fmt = 's',	.type = SUBST_ATTR },
 		{ .name = "sysfsroot",	.fmt = 'r',	.type = SUBST_SYSFSROOT },
 		{ .name = "env",	.fmt = 'E',	.type = SUBST_ENV },
+		{ .name = "config",	.fmt = 'g',	.type = SUBST_CONFIG },
 		{ NULL, '\0', 0 }
 	};
 	enum subst_type type;
@@ -1102,6 +1194,16 @@ found:
 			dbg("substitute env '%s=%s'", attr, pos);
 			strlcat(string, pos, maxsize);
 			break;
+		case SUBST_CONFIG:
+			if (attr == NULL) {
+				dbg("missing attribute");
+				break;
+			}
+			pair = value_find(space, attr);
+			if (pair == NULL)
+				break;
+			strlcat(string, pair->value, maxsize);
+			break;
 		default:
 			Perror(space, "unknown substitution type=%i", type);
 			break;
@@ -1139,108 +1241,23 @@ found:
 	*tail = 0;
 }
 
-static int do_match(const char *key, enum key_op op,
-		    const char *key_value, const char *value)
-{
-	int match;
-
-	if (value == NULL)
-		return 0;
-	dbg("match %s '%s' <-> '%s'", key, key_value, value);
-	match = fnmatch(key_value, value, 0) == 0;
-	if (match && op == KEY_OP_MATCH) {
-		dbg("%s is true (matching value)", key);
-		return 1;
-	}
-	if (!match && op == KEY_OP_NOMATCH) {
-		dbg("%s is true (non-matching value)", key);
-		return 1;
-	}
-	dbg("%s is false", key);
-	return 0;
-}
-
-static int ctl_match(snd_ctl_elem_id_t *pattern, snd_ctl_elem_id_t *id)
-{
-	if (snd_ctl_elem_id_get_interface(pattern) != -1 &&
-	    snd_ctl_elem_id_get_interface(pattern) != snd_ctl_elem_id_get_interface(id))
-	    	return 0;
-	if (snd_ctl_elem_id_get_device(pattern) != -1 &&
-	    snd_ctl_elem_id_get_device(pattern) != snd_ctl_elem_id_get_device(id))
-		return 0;
-	if (snd_ctl_elem_id_get_subdevice(pattern) != -1 &&
-	    snd_ctl_elem_id_get_subdevice(pattern) != snd_ctl_elem_id_get_subdevice(id))
-	    	return 0;
-	if (snd_ctl_elem_id_get_index(pattern) != -1 &&
-	    snd_ctl_elem_id_get_index(pattern) != snd_ctl_elem_id_get_index(id))
-	    	return 0;
-	if (fnmatch(snd_ctl_elem_id_get_name(pattern), snd_ctl_elem_id_get_name(id), 0) != 0)
-		return 0;
-	return 1;
-}
-
 static
 int run_program1(struct space *space,
 		 const char *command0, char *result,
 		 size_t ressize, size_t *reslen, int log)
 {
-	char *pos = strchr(command0, ' ');
-	int cmdlen = pos ? pos - command0 : strlen(command0);
-	int err, index;
-	snd_hctl_elem_t *elem;
-	snd_ctl_elem_id_t *id;
-	
-	if (cmdlen == 12 && strncmp(command0, "__ctl_search", 12) == 0) {
-		index = 0;
-		if (pos)
-			index = strtol(pos, NULL, 0);
-		err = snd_ctl_elem_id_malloc(&id);
-		if (err < 0)
+	if (strncmp(command0, "__ctl_search", 12) == 0) {
+		const char *res = elemid_get(space, "do_search");
+		if (res == NULL || strcmp(res, "1") != 0)
 			return EXIT_FAILURE;
-		elem = snd_hctl_first_elem(space->ctl_handle);
-		while (elem) {
-			snd_hctl_elem_get_id(elem, id);
-			if (!ctl_match(space->ctl_id, id))
-				goto next_search;
-			if (index > 0) {
-				index--;
-				goto next_search;
-			}
-			strlcpy(result, "0", ressize);
-			snd_ctl_elem_id_copy(space->ctl_id, id);
-			snd_ctl_elem_id_free(id);
-			dbg("__ctl_search found a control");
-			return EXIT_SUCCESS;
-		      next_search:
-			elem = snd_hctl_elem_next(elem);
-		}
-		snd_ctl_elem_id_free(id);
-		return EXIT_FAILURE;
+		return EXIT_SUCCESS;
 	}
-	if (cmdlen == 11 && strncmp(command0, "__ctl_count", 11) == 0) {
-		index = 0;
-		err = snd_ctl_elem_id_malloc(&id);
-		if (err < 0)
+	if (strncmp(command0, "__ctl_count", 11) == 0) {
+		const char *res = elemid_get(space, "do_count");
+		if (res == NULL || strcmp(res, "0") == 0)
 			return EXIT_FAILURE;
-		elem = snd_hctl_first_elem(space->ctl_handle);
-		while (elem) {
-			snd_hctl_elem_get_id(elem, id);
-			if (!ctl_match(space->ctl_id, id))
-				goto next_count;
-			index++;
-		      next_count:
-			elem = snd_hctl_elem_next(elem);
-		}
-		snd_ctl_elem_id_free(id);
-		if (index > 0) {
-			snprintf(result, ressize, "%u", index);
-			dbg("__ctl_count found %s controls", result);
-			return EXIT_SUCCESS;
-		}
-		dbg("__ctl_count no match");
-		return EXIT_FAILURE;
-	}
-	if (cmdlen == 11 && strncmp(command0, "__ctl_write", 11) == 0) {
+		strlcpy(result, res, ressize);
+		return EXIT_SUCCESS;
 	}
 	Perror(space, "unknown buildin command '%s'", command0);
 	return EXIT_FAILURE;
@@ -1254,7 +1271,7 @@ static char *new_root_dir(const char *filename)
 
 	res = strdup(filename);
 	if (res) {
-		tmp = rindex(res, '/');
+		tmp = strrchr(res, '/');
 		if (tmp)
 			*tmp = '\0';
 	}
@@ -1314,15 +1331,25 @@ static int parse_line(struct space *space, char *line, size_t linesize)
 				}
 				snprintf(string, sizeof(string), "%i", err);
 				space->program_result = strdup(string);
-				if (err < 0 || space->program_result == NULL) {
-					err = 0;
+				err = 0;
+				if (space->program_result == NULL)
 					break;
-				}
 			} else if (op == KEY_OP_MATCH || op == KEY_OP_NOMATCH) {
-				dbg("ctl match: '%s' '%s'", value, attr);
-				temp = (char *)elemid_get(space, attr);
-				if (!do_match(key, op, value, temp))
-					break;
+				if (strncmp(attr, "write", 5) == 0) {
+					strlcpy(result, value, sizeof(result));
+					apply_format(space, result, sizeof(result));
+					dbg("ctl write: '%s' '%s'", value, attr);
+					err = elemid_set(space, "values", result);
+					if (err == 0 && op == KEY_OP_NOMATCH)
+						break;
+					if (err != 0 && op == KEY_OP_MATCH)
+						break;
+				} else {
+					temp = (char *)elemid_get(space, attr);
+					dbg("ctl match: '%s' '%s' '%s'", attr, value, temp);
+					if (!do_match(key, op, value, temp))
+						break;
+				}
 			} else {
 				Perror(space, "invalid CTL{} operation");
 				goto invalid;
@@ -1522,15 +1549,23 @@ static int parse_line(struct space *space, char *line, size_t linesize)
 		}
 		if (strncasecmp(key, "ACCESS", 6) == 0) {
 			if (op == KEY_OP_MATCH || op == KEY_OP_NOMATCH) {
+				if (value[0] == '$') {
+					strlcpy(string, value, sizeof(string));
+					apply_format(space, string, sizeof(string));
+					if (string[0] == '/')
+						goto __access1;
+				}
 				if (value[0] != '/') {
 					strlcpy(string, space->rootdir, sizeof(string));
 					strlcat(string, "/", sizeof(string));
 					strlcat(string, value, sizeof(string));
 				} else {
-					strlcat(string, value, sizeof(string));
+					strlcpy(string, value, sizeof(string));
 				}
+				apply_format(space, string, sizeof(string));
+			      __access1:
 				count = access(string, F_OK);
-				dbg("access(%s) = %i", value, count);
+				dbg("access(%s) = %i (%s)", string, count, value);
 				if (op == KEY_OP_MATCH && count != 0)
 					break;
 				if (op == KEY_OP_NOMATCH && count == 0)
@@ -1713,10 +1748,12 @@ int init(const char *filename, const char *cardname)
 			}
 			first = 0;
 			err = init_space(&space, card);
-			if (err == 0 &&
-			    (space->rootdir = new_root_dir(filename)) != NULL)
-				err = parse(space, filename);
-			free_space(space);
+			if (err == 0) {
+				space->rootdir = new_root_dir(filename);
+				if (space->rootdir != NULL)
+					err = parse(space, filename);
+				free_space(space);
+			}
 			if (err < 0)
 				break;
 		}
@@ -1728,10 +1765,12 @@ int init(const char *filename, const char *cardname)
 		}
 		memset(&space, 0, sizeof(space));
 		err = init_space(&space, card);
-		if (err == 0 &&
-		    (space->rootdir = new_root_dir(filename)) != NULL)
-			err = parse(space, filename);
-		free_space(space);
+		if (err == 0) {
+			space->rootdir = new_root_dir(filename);
+			if (space->rootdir  != NULL)
+				err = parse(space, filename);
+			free_space(space);
+		}
 	}
   error:
 	sysfs_cleanup();

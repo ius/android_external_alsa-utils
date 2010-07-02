@@ -38,7 +38,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = alsamixer$(EXEEXT)
 subdir = alsamixer
-DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -54,8 +54,13 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-alsamixer_SOURCES = alsamixer.c
-alsamixer_OBJECTS = alsamixer.$(OBJEXT)
+am_alsamixer_OBJECTS = card_select.$(OBJEXT) cli.$(OBJEXT) \
+	colors.$(OBJEXT) device_name.$(OBJEXT) die.$(OBJEXT) \
+	mainloop.$(OBJEXT) mem.$(OBJEXT) mixer_controls.$(OBJEXT) \
+	mixer_display.$(OBJEXT) mixer_widget.$(OBJEXT) \
+	proc_files.$(OBJEXT) textbox.$(OBJEXT) utils.$(OBJEXT) \
+	widget.$(OBJEXT)
+alsamixer_OBJECTS = $(am_alsamixer_OBJECTS)
 alsamixer_LDADD = $(LDADD)
 alsamixer_DEPENDENCIES =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
@@ -65,8 +70,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = alsamixer.c
-DIST_SOURCES = alsamixer.c
+SOURCES = $(alsamixer_SOURCES)
+DIST_SOURCES = $(alsamixer_SOURCES)
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(man_MANS)
@@ -106,6 +111,14 @@ EXEEXT = @EXEEXT@
 GMSGFMT = @GMSGFMT@
 GMSGFMT_015 = @GMSGFMT_015@
 GREP = @GREP@
+HAVE_MIXER_FALSE = @HAVE_MIXER_FALSE@
+HAVE_MIXER_TRUE = @HAVE_MIXER_TRUE@
+HAVE_PCM_FALSE = @HAVE_PCM_FALSE@
+HAVE_PCM_TRUE = @HAVE_PCM_TRUE@
+HAVE_RAWMIDI_FALSE = @HAVE_RAWMIDI_FALSE@
+HAVE_RAWMIDI_TRUE = @HAVE_RAWMIDI_TRUE@
+HAVE_SEQ_FALSE = @HAVE_SEQ_FALSE@
+HAVE_SEQ_TRUE = @HAVE_SEQ_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -116,6 +129,7 @@ LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
+LIBRT = @LIBRT@
 LIBS = @LIBS@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
@@ -196,6 +210,21 @@ target_alias = @target_alias@
 xmlto = @xmlto@
 AM_CFLAGS = @CURSES_CFLAGS@ -DCURSESINC="@CURSESINC@"
 LDADD = @CURSESLIB@
+alsamixer_SOURCES = card_select.c card_select.h \
+		cli.c \
+		colors.c colors.h \
+		device_name.c device_name.h \
+		die.c die.h \
+		mainloop.c mainloop.h \
+		mem.c mem.h \
+		mixer_controls.c mixer_controls.h \
+		mixer_display.c mixer_display.h \
+		mixer_widget.c mixer_widget.h \
+		proc_files.c proc_files.h \
+		textbox.c textbox.h \
+		utils.c utils.h \
+		widget.c widget.h
+
 man_MANS = alsamixer.1
 EXTRA_DIST = alsamixer.1
 alsamixer_INCLUDES = -I$(top_srcdir)/include
@@ -265,7 +294,20 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alsamixer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/card_select.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cli.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/colors.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/device_name.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/die.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mainloop.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mixer_controls.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mixer_display.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mixer_widget.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/proc_files.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/textbox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/widget.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

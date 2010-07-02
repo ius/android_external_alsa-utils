@@ -534,6 +534,26 @@ static void decode_tlv(unsigned int spaces, unsigned int *tlv, unsigned int tlv_
 		}
 		break;
 #endif
+#ifdef SND_CTL_TLVT_DB_MINMAX
+	case SND_CTL_TLVT_DB_MINMAX:
+	case SND_CTL_TLVT_DB_MINMAX_MUTE:
+		if (type == SND_CTL_TLVT_DB_MINMAX_MUTE)
+			printf("dBminmaxmute-");
+		else
+			printf("dBminmax-");
+		if (size != 2 * sizeof(unsigned int)) {
+			while (size > 0) {
+				printf("0x%08x,", tlv[idx++]);
+				size -= sizeof(unsigned int);
+			}
+		} else {
+			printf("min=");
+			print_dB(tlv[2]);
+			printf(",max=");
+			print_dB(tlv[3]);
+		}
+		break;
+#endif
 	default:
 		printf("unk-%i-", type);
 		while (size > 0) {
@@ -602,6 +622,8 @@ static int show_control(const char *space, snd_hctl_elem_t *elem,
 		break;
 	}
 	if (level & LEVEL_BASIC) {
+		if (!snd_ctl_elem_info_is_readable(info))
+			goto __skip_read;
 		if ((err = snd_hctl_elem_read(elem, control)) < 0) {
 			error("Control %s element read error: %s\n", card, snd_strerror(err));
 			return err;
@@ -638,6 +660,7 @@ static int show_control(const char *space, snd_hctl_elem_t *elem,
 			}
 		}
 		printf("\n");
+	      __skip_read:
 		if (!snd_ctl_elem_info_is_tlv_readable(info))
 			goto __skip_tlv;
 		tlv = malloc(4096);

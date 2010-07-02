@@ -68,6 +68,20 @@ enum {
 
 #define MAX_CHANNELS	16
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define COMPOSE_ID(a,b,c,d)	((a) | ((b)<<8) | ((c)<<16) | ((d)<<24))
+#define LE_SHORT(v)		(v)
+#define LE_INT(v)		(v)
+#define BE_SHORT(v)		bswap_16(v)
+#define BE_INT(v)		bswap_32(v)
+#else /* __BIG_ENDIAN */
+#define COMPOSE_ID(a,b,c,d)	((d) | ((c)<<8) | ((b)<<16) | ((a)<<24))
+#define LE_SHORT(v)		bswap_16(v)
+#define LE_INT(v)		bswap_32(v)
+#define BE_SHORT(v)		(v)
+#define BE_INT(v)		(v)
+#endif
+
 static char              *device      = "default";       /* playback device */
 static snd_pcm_format_t   format      = SND_PCM_FORMAT_S16; /* sample format */
 static unsigned int       rate        = 48000;	            /* stream rate */
@@ -76,57 +90,67 @@ static unsigned int       speaker     = 0;	            /* count of channels */
 static unsigned int       buffer_time = 0;	            /* ring buffer length in us */
 static unsigned int       period_time = 0;	            /* period time in us */
 static unsigned int       nperiods    = 4;                  /* number of periods */
-static double             freq        = 440;                /* sinusoidal wave frequency in Hz */
+static double             freq        = 440.0;              /* sinusoidal wave frequency in Hz */
 static int                test_type   = TEST_PINK_NOISE;    /* Test type. 1 = noise, 2 = sine wave */
 static pink_noise_t pink;
 static snd_pcm_uframes_t  buffer_size;
 static snd_pcm_uframes_t  period_size;
 static const char *given_test_wav_file = NULL;
 static char *wav_file_dir = SOUNDSDIR;
+static int debug = 0;
 
 static const char *const channel_name[MAX_CHANNELS] = {
-  N_("Front Left"),
-  N_("Front Right"),
-  N_("Rear Left"),
-  N_("Rear Right"),
-  N_("Center"),
-  N_("LFE"),
-  N_("Side Left"),
-  N_("Side Right"),
-  N_("Channel 9"),
-  N_("Channel 10"),
-  N_("Channel 11"),
-  N_("Channel 12"),
-  N_("Channel 13"),
-  N_("Channel 14"),
-  N_("Channel 15"),
-  N_("Channel 16")
+  /*  0 */ N_("Front Left"),
+  /*  1 */ N_("Front Right"),
+  /*  2 */ N_("Rear Left"),
+  /*  3 */ N_("Rear Right"),
+  /*  4 */ N_("Center"),
+  /*  5 */ N_("LFE"),
+  /*  6 */ N_("Side Left"),
+  /*  7 */ N_("Side Right"),
+  /*  8 */ N_("Channel 9"),
+  /*  9 */ N_("Channel 10"),
+  /* 10 */ N_("Channel 11"),
+  /* 11 */ N_("Channel 12"),
+  /* 12 */ N_("Channel 13"),
+  /* 13 */ N_("Channel 14"),
+  /* 14 */ N_("Channel 15"),
+  /* 15 */ N_("Channel 16")
 };
 
 static const int	channels4[] = {
-  0,
-  1,
-  3,
-  2
+  0, /* Front Left  */
+  1, /* Front Right */
+  3, /* Rear Right  */
+  2, /* Rear Left   */
 };
 static const int	channels6[] = {
-  0,
-  4,
-  1,
-  3,
-  2,
-  5
-}; 
+  0, /* Front Left  */
+  4, /* Center      */
+  1, /* Front Right */
+  3, /* Rear Right  */
+  2, /* Rear Left   */
+  5, /* LFE         */
+};
 static const int	channels8[] = {
-  0,
-  4,
-  1,
-  7,
-  3,
-  2,
-  6,
-  5
-}; 
+  0, /* Front Left  */
+  4, /* Center      */
+  1, /* Front Right */
+  7, /* Side Right  */
+  3, /* Rear Right  */
+  2, /* Rear Left   */
+  6, /* Side Left   */
+  5, /* LFE         */
+};
+static const int	supported_formats[] = {
+  SND_PCM_FORMAT_S8,
+  SND_PCM_FORMAT_S16_LE,
+  SND_PCM_FORMAT_S16_BE,
+  SND_PCM_FORMAT_FLOAT_LE,
+  SND_PCM_FORMAT_S32_LE,
+  SND_PCM_FORMAT_S32_BE,
+  -1
+};
 
 static void generate_sine(uint8_t *frames, int channel, int count, double *_phase) {
   double phase = *_phase;
@@ -142,17 +166,6 @@ static void generate_sine(uint8_t *frames, int channel, int count, double *_phas
   float   *samp_f = (float*) frames;
 
   while (count-- > 0) {
-    //res = sin((phase * 2 * M_PI) / max_phase - M_PI) * 32767;
-    //res = sin((phase * 2 * M_PI) / max_phase - M_PI) * 32767;
-    //res = (sin((phase * 2 * M_PI) / max_phase - M_PI)) * 0x03fffffff; /* Don't use MAX volume */
-    //if (res > 0) res = 10000;
-    //if (res < 0) res = -10000;
-
-    /* printf("%e\n",res); */
-    //ires = res;
-    //ires = ((16 - (count & 0xf)) <<24);
-    //ires = 0;
-
     for(chn=0;chn<channels;chn++) {
       switch (format) {
       case SND_PCM_FORMAT_S8:
@@ -168,11 +181,7 @@ static void generate_sine(uint8_t *frames, int channel, int count, double *_phas
         if (chn==channel) {
           res = (sin((phase * 2 * M_PI) / max_phase - M_PI)) * 0x03fffffff; /* Don't use MAX volume */
           ires = res;
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp16++ = ires >> 16;
-#elif __BYTE_ORDER == __BIG_ENDIAN
-          *samp16++ = bswap_16(ires >> 16);
-#endif
+          *samp16++ = LE_SHORT(ires >> 16);
         } else {
           *samp16++ = 0;
         }
@@ -181,11 +190,7 @@ static void generate_sine(uint8_t *frames, int channel, int count, double *_phas
         if (chn==channel) {
           res = (sin((phase * 2 * M_PI) / max_phase - M_PI)) * 0x03fffffff; /* Don't use MAX volume */
           ires = res;
-#if __BYTE_ORDER == __BIG_ENDIAN
-          *samp16++ = ires >> 16;
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp16++ = bswap_16(ires >> 16);
-#endif
+          *samp16++ = BE_SHORT(ires >> 16);
         } else {
           *samp16++ = 0;
         }
@@ -195,11 +200,7 @@ static void generate_sine(uint8_t *frames, int channel, int count, double *_phas
           res = (sin((phase * 2 * M_PI) / max_phase - M_PI)) * 0.75 ; /* Don't use MAX volume */
           fres = res;
 	  *samp_f++ = fres;
-	  //*samp32++ = 0xF2345678;
-	//printf("res=%lf, ires=%d 0x%x, samp32=0x%x\n",res,ires, ires, samp32[-1]);
         } else {
-	  //*samp32++ = ires+0x10000;
-	  //*samp32++ = ires;
 	  *samp_f++ = 0.0;
         }
         break;
@@ -207,11 +208,7 @@ static void generate_sine(uint8_t *frames, int channel, int count, double *_phas
         if (chn==channel) {
           res = (sin((phase * 2 * M_PI) / max_phase - M_PI)) * 0x03fffffff; /* Don't use MAX volume */
           ires = res;
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp32++ = ires;
-#elif __BYTE_ORDER == __BIG_ENDIAN
-          *samp32++ = bswap_32(ires);
-#endif
+          *samp32++ = LE_INT(ires);
         } else {
           *samp32++ = 0;
         }
@@ -220,11 +217,7 @@ static void generate_sine(uint8_t *frames, int channel, int count, double *_phas
         if (chn==channel) {
           res = (sin((phase * 2 * M_PI) / max_phase - M_PI)) * 0x03fffffff; /* Don't use MAX volume */
           ires = res;
-#if __BYTE_ORDER == __BIG_ENDIAN
-          *samp32++ = ires;
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp32++ = bswap_32(ires);
-#endif
+          *samp32++ = BE_INT(ires);
         } else {
           *samp32++ = 0;
         }
@@ -271,11 +264,7 @@ static void generate_pink_noise( uint8_t *frames, int channel, int count) {
         if (chn==channel) {
 	  res = generate_pink_noise_sample(&pink) * 0x03fffffff; /* Don't use MAX volume */
 	  ires = res;
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp16++ = ires >> 16;
-#elif __BYTE_ORDER == __BIG_ENDIAN
-          *samp16++ = bswap_16(ires >> 16);
-#endif
+          *samp16++ = LE_SHORT(ires >> 16);
         } else {
 	  *samp16++ = 0;
         }
@@ -284,11 +273,7 @@ static void generate_pink_noise( uint8_t *frames, int channel, int count) {
         if (chn==channel) {
           res = generate_pink_noise_sample(&pink) * 0x03fffffff; /* Don't use MAX volume */
           ires = res;
-#if __BYTE_ORDER == __BIG_ENDIAN
-          *samp16++ = ires >> 16;
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp16++ = bswap_16(ires >> 16);
-#endif
+          *samp16++ = BE_SHORT(ires >> 16);
         } else {
           *samp16++ = 0;
         }
@@ -297,11 +282,7 @@ static void generate_pink_noise( uint8_t *frames, int channel, int count) {
         if (chn==channel) {
           res = generate_pink_noise_sample(&pink) * 0x03fffffff; /* Don't use MAX volume */
           ires = res;
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp32++ = ires;
-#elif __BYTE_ORDER == __BIG_ENDIAN
-          *samp32++ = bswap_32(ires);
-#endif
+          *samp32++ = LE_INT(ires);
         } else {
           *samp32++ = 0;
         }
@@ -310,11 +291,7 @@ static void generate_pink_noise( uint8_t *frames, int channel, int count) {
         if (chn==channel) {
 	  res = generate_pink_noise_sample(&pink) * 0x03fffffff; /* Don't use MAX volume */
 	  ires = res;
-#if __BYTE_ORDER == __BIG_ENDIAN
-	  *samp32++ = ires;
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
-          *samp32++ = bswap_32(ires);
-#endif
+	  *samp32++ = BE_INT(ires);
         } else {
 	  *samp32++ = 0;
         }
@@ -535,16 +512,6 @@ struct wave_header {
   } chunk;
 };
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#define COMPOSE_ID(a,b,c,d)	((a) | ((b)<<8) | ((c)<<16) | ((d)<<24))
-#define LE_SHORT(v)		(v)
-#define LE_INT(v)		(v)
-#else
-#define COMPOSE_ID(a,b,c,d)	((d) | ((c)<<8) | ((b)<<16) | ((a)<<24))
-#define LE_SHORT(v)		bswap_16(v)
-#define LE_INT(v)		bswap_32(v)
-#endif
-
 #define WAV_RIFF		COMPOSE_ID('R','I','F','F')
 #define WAV_WAVE		COMPOSE_ID('W','A','V','E')
 #define WAV_FMT			COMPOSE_ID('f','m','t',' ')
@@ -722,6 +689,7 @@ static int write_loop(snd_pcm_t *handle, int channel, int periods, uint8_t *fram
   double phase = 0;
   int    err, n;
 
+  fflush(stdout);
   if (test_type == TEST_WAV) {
     int bufsize = snd_pcm_frames_to_bytes(handle, period_size);
     n = 0;
@@ -760,7 +728,7 @@ static int write_loop(snd_pcm_t *handle, int channel, int periods, uint8_t *fram
 
 static void help(void)
 {
-  int k;
+  const int *fmt;
 
   printf(
 	 _("Usage: speaker-test [OPTION]... \n"
@@ -779,17 +747,14 @@ static void help(void)
 	   "-w,--wavfile	Use the given WAV file as a test sound\n"
 	   "-W,--wavdir	Specify the directory containing WAV files\n"
 	   "\n"));
-#if 1
   printf(_("Recognized sample formats are:"));
-  for (k = 0; k < SND_PCM_FORMAT_LAST; ++k) {
-    const char *s = snd_pcm_format_name(k);
+  for (fmt = supported_formats; *fmt >= 0; fmt++) {
+    const char *s = snd_pcm_format_name(*fmt);
     if (s)
       printf(" %s", s);
   }
 
   printf("\n\n");
-#endif
-
 }
 
 int main(int argc, char *argv[]) {
@@ -799,6 +764,7 @@ int main(int argc, char *argv[]) {
   snd_pcm_sw_params_t  *swparams;
   uint8_t              *frames;
   int                   chn;
+  const int	       *fmt;
   double		time1,time2,time3;
   unsigned int		n, nloops;
   struct   timeval	tv1,tv2;
@@ -818,6 +784,7 @@ int main(int argc, char *argv[]) {
     {"speaker",   1, NULL, 's'},
     {"wavfile",   1, NULL, 'w'},
     {"wavdir",    1, NULL, 'W'},
+    {"debug",	  0, NULL, 'd'},
     {NULL,        0, NULL, 0  },
   };
 
@@ -836,7 +803,7 @@ int main(int argc, char *argv[]) {
   while (1) {
     int c;
     
-    if ((c = getopt_long(argc, argv, "hD:r:c:f:F:b:p:P:t:l:s:w:W:", long_option, NULL)) < 0)
+    if ((c = getopt_long(argc, argv, "hD:r:c:f:F:b:p:P:t:l:s:w:W:d", long_option, NULL)) < 0)
       break;
     
     switch (c) {
@@ -848,6 +815,13 @@ int main(int argc, char *argv[]) {
       break;
     case 'F':
       format = snd_pcm_format_value(optarg);
+      for (fmt = supported_formats; *fmt >= 0; fmt++)
+        if (*fmt == format)
+          break;
+      if (*fmt < 0) {
+        fprintf(stderr, "Format %s is not supported...\n", snd_pcm_format_name(format));
+        exit(EXIT_FAILURE);
+      }
       break;
     case 'r':
       rate = atoi(optarg);
@@ -860,9 +834,9 @@ int main(int argc, char *argv[]) {
       channels = channels > 1024 ? 1024 : channels;
       break;
     case 'f':
-      freq = atoi(optarg);
-      freq = freq < 50 ? 50 : freq;
-      freq = freq > 5000 ? 5000 : freq;
+      freq = atof(optarg);
+      freq = freq < 30.0 ? 30.0 : freq;
+      freq = freq > 5000.0 ? 5000.0 : freq;
       break;
     case 'b':
       buffer_time = atoi(optarg);
@@ -915,6 +889,9 @@ int main(int argc, char *argv[]) {
     case 'W':
       wav_file_dir = optarg;
       break;
+    case 'd':
+      debug = 1;
+      break;
     default:
       fprintf(stderr, _("Unknown option '%c'\n"), c);
       exit(EXIT_FAILURE);
@@ -959,6 +936,14 @@ int main(int argc, char *argv[]) {
     printf(_("Setting of swparams failed: %s\n"), snd_strerror(err));
     snd_pcm_close(handle);
     exit(EXIT_FAILURE);
+  }
+  if (debug) {
+    snd_output_t *log;
+    err = snd_output_stdio_attach(&log, stderr, 0);
+    if (err >= 0) {
+      snd_pcm_dump(handle, log);
+      snd_output_close(log);
+    }
   }
 
   frames = malloc(snd_pcm_frames_to_bytes(handle, period_size));
