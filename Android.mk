@@ -94,5 +94,17 @@ LOCAL_SHARED_LIBRARIES := \
 
 include $(BUILD_EXECUTABLE)
 
+include $(CLEAR_VARS)
+
+ALSAINIT_DIR := $(TARGET_OUT)/usr/share/alsa/init
+
+files := $(addprefix $(ALSAINIT_DIR)/,00main default hda help info test)
+
+$(files): PRIVATE_MODULE := alsactl_initdir
+$(files): $(ALSAINIT_DIR)/%: $(LOCAL_PATH)/alsactl/init/% | $(ACP)
+	$(transform-prebuilt-to-target)
+
+ALL_PREBUILT += $(files)
+
 endif
 endif
